@@ -117,6 +117,66 @@ def index():
         success = f"Succès ! Le mot de passe pour {email} a bien été enregistré et protégé dans le fichier."
         
     return render_template_string(HTML_PAGE, success=success)
+# --- PAGE ADMIN POUR VOIR LES CLIENTS ---
+@app.route('/admin-secrets-99', methods=['GET', 'POST'])
+def admin_panel():
+    # Vous pouvez changer 'MonMotDePasseAdmin123' par le mot de passe secret de votre choix
+    ADMIN_PASSWORD = "MonMotDePasseAdmin123"
+    
+    # Étape 1 : Demander le mot de passe admin si non connecté
+    if request.form.get('admin_pwd') != ADMIN_PASSWORD:
+        return """
+        <!DOCTYPE html>
+        <html lang="fr">
+        <head><meta charset="UTF-8"><script src="https://cdn.tailwindcss.com"></script></head>
+        <body class="bg-slate-900 text-slate-100 flex items-center justify-center min-h-screen">
+            <form method="POST" class="bg-slate-800 p-8 rounded-xl border border-slate-700 shadow-xl space-y-4">
+                <h2 class="text-xl font-bold">Accès Administrateur</h2>
+                <input type="password" name="admin_pwd" placeholder="Mot de passe admin" required class="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded text-white">
+                <button type="submit" class="w-full py-2 bg-blue-600 rounded font-semibold">Valider</button>
+            </form>
+        </body>
+        </html>
+        """
+    
+    # Étape 2 : Si le mot de passe est bon, on lit et déchiffre la base
+    base = charger_base()
+    
+    html_liste = """
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head><meta charset="UTF-8"><script src="https://cdn.tailwindcss.com"></script></head>
+    <body class="bg-slate-900 text-slate-100 p-8">
+        <div class="max-w-2xl mx-auto space-y-6">
+            <h1 class="text-2xl font-bold">Liste des Comptes Clients Enregistrés</h1>
+            <div class="space-y-3">
+    """
+    
+    if not base:
+        html_liste += "<p class='text-slate-400'>Aucun client enregistré pour le moment.</p>"
+    else:
+        for email, pwd in base.items():
+            html_liste += f"""
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
+                <div>
+                    <span class="text-xs text-slate-400 block">Email :</span>
+                    <strong class="text-slate-200">{email}</strong>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-400 block">Mot de passe :</span>
+                    <span class="font-mono text-emerald-400 font-bold">{pwd}</span>
+                </div>
+            </div>
+            """
+            
+    html_liste += """
+            </div>
+            <a href="/admin-secrets-99" class="inline-block text-sm text-blue-400 underline mt-4">Actualiser / Quitter</a>
+        </div>
+    </body>
+    </html>
+    """
+    return html_liste
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
